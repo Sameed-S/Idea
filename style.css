@@ -34,32 +34,6 @@ header h1 {
     font-size: 2.5em;
 }
 
-/* Navbar */
-nav {
-    margin-top: 10px;
-}
-
-.navbar {
-    list-style-type: none;
-    padding: 0;
-}
-
-.navbar li {
-    display: inline;
-    margin: 0 15px;
-}
-
-.navbar a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-.navbar a:hover {
-    color: #ffe600; /* Bright yellow on hover */
-}
-
 /* Meal Preview Section */
 .meal-preview {
     background-color: white;
