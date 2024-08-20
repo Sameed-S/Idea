@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Recipe Website</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="home.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="recipelist.html">Recipes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About Us</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Recipes</h1>
+        </header>
+
+        <!-- Content for the recipes page -->
+        <div class="meal-preview">
+            <h2 id="meal-name">Recipe of the Day:</h2>
+            <img id="meal-thumb" alt="Recipe Image" />
+            <p><strong>Category:</strong> <span id="meal-category"></span></p>
+            <p><strong>Instructions:</strong> <span id="meal-instructions"></span></p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        // Fetch recipe data
+        fetch('https://www.themealdb.com/api/json/v1/1/search.php?f=1')
+        .then(response => response.json())
+        .then(data => {
+            console.log('API Response:', data);
+
+            if (data.meals && data.meals.length > 0) {
+                const meal = data.meals[0];
+
+                document.getElementById('meal-name').textContent += meal.strMeal;
+                document.getElementById('meal-thumb').src = meal.strMealThumb;
+                document.getElementById('meal-thumb').alt = `Image of ${meal.strMeal}`;
+                document.getElementById('meal-category').textContent = meal.strCategory;
+                document.getElementById('meal-instructions').textContent = meal.strInstructions;
+            } else {
+                console.error('No meals found in the API response');
+            }
+        })
+        .catch(error => console.error('Error fetching the meal data:', error));
+    </script>
+</body>
+</html>
