@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Recipe Website</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="home.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="recipes.html">Recipes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About Us</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 id="recipe-name">Recipe Name</h1>
+        <img id="recipe-thumb" alt="Recipe Image" class="img-fluid" />
+        <p><strong>Category:</strong> <span id="recipe-category"></span></p>
+        <p><strong>Area:</strong> <span id="recipe-area"></span></p>
+        <p><strong>Instructions:</strong> <span id="recipe-instructions"></span></p>
+        <p><strong>Tags:</strong> <span id="recipe-tags"></span></p>
+        <h3>Ingredients:</h3>
+        <ul id="recipe-ingredients"></ul>
+        <h3>Video:</h3>
+        <p><a id="recipe-video" href="#" target="_blank">Watch the video</a></p> <!-- Changed to a clickable link -->
+    </div>
+
+    <script>
+        // Get the recipe ID from the URL
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        // Fetch recipe details using the ID
+        fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            const meal = data.meals[0];
+
+            document.getElementById('recipe-name').textContent = meal.strMeal;
+            document.getElementById('recipe-thumb').src = meal.strMealThumb;
+            document.getElementById('recipe-category').textContent = meal.strCategory;
+            document.getElementById('recipe-area').textContent = meal.strArea;
+            document.getElementById('recipe-instructions').textContent = meal.strInstructions;
+
+            // Prepare ingredients list
+            const ingredientsList = document.getElementById('recipe-ingredients');
+            for (let i = 1; i <= 20; i++) {
+                const ingredient = meal[`strIngredient${i}`];
+                const measure = meal[`strMeasure${i}`];
+                if (ingredient) {
+                    const li = document.createElement('li');
+                    li.textContent = `${measure} ${ingredient}`;
+                    ingredientsList.appendChild(li);
+                }
+            }
+
+            // Set tags
+            document.getElementById('recipe-tags').textContent = meal.strTags ? meal.strTags : 'No tags available';
+
+            // Set the video link
+            const videoUrl = meal.strYoutube;
+            const videoLink = document.getElementById('recipe-video');
+            if (videoUrl) {
+                videoLink.href = videoUrl; // Set the link to the video URL
+            } else {
+                videoLink.textContent = 'No video available'; // Message if no video
+                videoLink.href = '#'; // Prevent link from pointing to an invalid URL
+            }
+        })
+        .catch(error => console.error('Error fetching the meal details:', error));
+    </script>
+</body>
+</html>
