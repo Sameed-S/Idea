@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Recipe Website</a>
+        <a class="navbar-brand" href="home.html">Recipe Website</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -20,7 +19,6 @@
                     <a class="nav-link" href="home.html">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="recipe.html">Recipes</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="about.html">About Us</a>
@@ -34,36 +32,47 @@
             <h1>Recipes</h1>
         </header>
 
-        <!-- Content for the recipes page -->
-        <div class="meal-preview">
-            <h2 id="meal-name">Recipe of the Day:</h2>
-            <img id="meal-thumb" alt="Recipe Image" />
-            <p><strong>Category:</strong> <span id="meal-category"></span></p>
-            <p><strong>Instructions:</strong> <span id="meal-instructions"></span></p>
+        <div id="recipe-list" class="row">
+            <!-- Recipe cards will be appended here -->
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
-        // Fetch recipe data
-        fetch('https://www.themealdb.com/api/json/v1/1/search.php?f=1')
+        // Fetch recipe data from the PHP script
+        fetch('fetch_meals.php')
         .then(response => response.json())
         .then(data => {
-            console.log('API Response:', data);
+            console.log('API Response:', data); // Check the response in the console
 
             if (data.meals && data.meals.length > 0) {
-                const meal = data.meals[0];
+                const recipeList = document.getElementById('recipe-list');
+                recipeList.innerHTML = '';
 
-                document.getElementById('meal-name').textContent += meal.strMeal;
-                document.getElementById('meal-thumb').src = meal.strMealThumb;
-                document.getElementById('meal-thumb').alt = `Image of ${meal.strMeal}`;
-                document.getElementById('meal-category').textContent = meal.strCategory;
-                document.getElementById('meal-instructions').textContent = meal.strInstructions;
+                data.meals.forEach(meal => {
+                    const card = `
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <img src="${meal.strMealThumb}" class="card-img-top" alt="Image of ${meal.strMeal}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${meal.strMeal}</h5>
+                                    <p class="card-text">Category: ${meal.strCategory}</p>
+                                    <a href="recipedetails.html?id=${meal.idMeal}" class="btn btn-primary">More Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    recipeList.innerHTML += card;
+                });
             } else {
                 console.error('No meals found in the API response');
+                document.getElementById('recipe-list').innerHTML = '<p>No meals available.</p>';
             }
         })
-        .catch(error => console.error('Error fetching the meal data:', error));
+        .catch(error => {
+            console.error('Error fetching the meal data:', error);
+            document.getElementById('recipe-list').innerHTML = '<p>Error fetching meals. Please try again later.</p>';
+        });
     </script>
 </body>
 </html>
